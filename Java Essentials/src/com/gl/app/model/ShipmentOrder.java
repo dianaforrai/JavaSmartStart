@@ -1,6 +1,5 @@
 package com.gl.app.model;
 
-import java.util.NavigableMap;
 enum Status {
     SHIPPED,
     PROCESSING,
@@ -15,31 +14,18 @@ public class ShipmentOrder {
     private String customer_Name;
     private Status status;
 
-    public ShipmentOrder(String orderId, String origin, String destination, double weight, String customer_Name, Status status) {
-        this.orderId = orderId;
-        this.origin = origin;
-        this.destination = destination;
-        this.weight = weight;
-        this.customer_Name = customer_Name;
-        this.status = status;
-    }
-
     public String getOrderId() {
         return orderId;
     }
-
     public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
-
     public String getOrigin() {
         return origin;
     }
-
     public void setOrigin(String origin) {
         this.origin = origin;
     }
-
     public String getDestination() {
         return destination;
     }
@@ -64,21 +50,32 @@ public class ShipmentOrder {
     public void setStatus(Status status) {
         this.status = status;
     }
-    public static void main(String[] args) {
-        ShipmentOrder[] shippedOrders = new ShipmentOrder[2];
-        ShipmentOrder[] deliveredOrders = new ShipmentOrder[2];
-        ShipmentOrder order1 = new ShipmentOrder("12345", "PUNE", "GOA", 10.0, "John Doe", Status.SHIPPED);
-        // ShipmentOrder order2 = new ShipmentOrder("67890", "BENGALURU", "GOA", 20.0, "Jane Doe", Status.DELIVERED);
-
-        ShipmentOrder[] shipmentOrders = {order1};
-
-        for (ShipmentOrder order : shipmentOrders) {
-            // Check if the status is "SHIPPED" and print message
-            if (order.getStatus() == Status.SHIPPED) {
+    public ShipmentOrder(String orderId, String origin, String destination, double weight, String customer_Name, Status status) {
+        this.orderId = orderId;
+        this.origin = origin;
+        this.destination = destination;
+        this.weight = weight;
+        this.customer_Name = customer_Name;
+        this.status = status;
+    }
+    public static void checkOrderStatus(String orderStatus) {
+        switch (orderStatus.toLowerCase()) {
+            case "shipped":
                 System.out.println("The order is shipped.");
-            } else {
-                System.out.println("The order is not shipped.");
-            }
+                break;
+            case "delivered":
+                System.out.println("The order is delivered.");
+                break;
+            default:
+                System.out.println("Invalid order status.");
+                break;
         }
+    }
+
+    public static void main(String[] args) {
+        String orderStatus1 = "Shipped";
+        String orderStatus2 = "delivered";
+        checkOrderStatus(orderStatus1); // Output: The order is shipped.
+        checkOrderStatus(orderStatus2); // Output: The order is delivered.
     }
 }
