@@ -1,8 +1,8 @@
 import java.sql.*;
 import java.util.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
+import static java.sql.DriverManager.getConnection;
 
 class Hotel {
     private int hotelId;
@@ -216,7 +216,7 @@ class Reservation {
                 reservationId, guestId, roomNumber, checkInDate, checkOutDate, status);
     }
 }
-public class DatabaseConnection {
+public class databaseConnection {
     private static final String URL = "jdbc:postgresql://localhost:5432/hilton_hotel";
     private static final String USERNAME = "postgres"; // Default PostgreSQL username
     private static final String PASSWORD = "Hugo2002."; // Change this to your actual password
@@ -270,4 +270,208 @@ public class DatabaseConnection {
                 "Please check: 1) PostgreSQL is running, 2) Database 'hilton_hotel' exists, " +
                 "3) Username/password are correct", lastException);
     }
+}
+
+public static void createTables() {
+    System.out.println("Creating database tables...");
+
+    String[] createTableQueries = {
+            // Hotel table - must be created first (referenced by other tables)
+            """
+            CREATE TABLE IF NOT EXISTS Hotel (
+                hotel_id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL UNIQUE,
+                location TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """,
+
+            // Guests table - references Hotel
+            """
+            CREATE TABLE IF NOT EXISTS Guests (
+                guest_id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                phone VARCHAR(20) NOT NULL,
+                hotel_id INTEGER NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (hotel_id) REFERENCES Hotel(hotel_id) ON DELETE CASCADE,
+                CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+                CONSTRAINT valid_phone CHECK (phone ~ '^[+]?[0-9\\s\\-\\(\\)]{10,20}$')
+            )
+            """,
+
+            // Room table - references Hotel
+            """
+            CREATE TABLE IF NOT EXISTS Room (
+                room_number INTEGER NOT NULL,
+                type VARCHAR(50) NOT NULL,
+                available BOOLEAN DEFAULT TRUE,
+                price_per_night DECIMAL(10,2) DEFAULT 0.00,
+                hotel_id INTEGER NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (room_number, hotel_id),
+                FOREIGN KEY (hotel_id) REFERENCES Hotel(hotel_id) ON DELETE CASCADE,
+                CONSTRAINT valid_room_type CHECK (type IN ('single', 'double', 'suite', 'deluxe', 'presidential')),
+                CONSTRAINT valid_price CHECK (price_per_night >= 0)
+            )
+            """,
+
+            // Reservation table - references Guests, Room, and Hotel
+            """
+            CREATE TABLE IF NOT EXISTS Reservation (
+                reservation_id SERIAL PRIMARY KEY,
+                guest_id INTEGER NOT NULL,
+                room_number INTEGER NOT NULL,
+                hotel_id INTEGER NOT NULL,
+                checkInDate DATE NOT NULL,
+                checkOutDate DATE NOT NULL,
+                reservationDate DATE NOT NULL DEFAULT CURRENT_DATE,
+                status VARCHAR(50) DEFAULT 'confirmed',
+                total_amount DECIMAL(10,2) DEFAULT 0.00,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (guest_id) REFERENCES Guests(guest_id) ON DELETE CASCADE,
+                FOREIGN KEY (room_number, hotel_id) REFERENCES Room(room_number, hotel_id) ON DELETE CASCADE,
+                FOREIGN KEY (hotel_id) REFERENCES Hotel(hotel_id) ON DELETE CASCADE,
+                CONSTRAINT valid_dates CHECK (checkOutDate > checkInDate),
+                CONSTRAINT valid_reservation_date CHECK (reservationDate <= checkInDate),
+                CONSTRAINT valid_status CHECK (status IN ('confirmed', 'cancelled', 'completed', 'no-show')),
+                CONSTRAINT valid_amount CHECK (total_amount >= 0)
+            )
+            """
+    };
+
+    // Create indexes for better performance
+    String[] createIndexQueries = {
+            "CREATE INDEX IF NOT EXISTS idx_guests_hotel ON Guests(hotel_id)",
+            "CREATE INDEX IF NOT EXISTS idx_guests_email ON Guests(email)",
+            "CREATE INDEX IF NOT EXISTS idx_room_hotel ON Room(hotel_id)",
+            "CREATE INDEX IF NOT EXISTS idx_room_available ON Room(available)",
+            "CREATE INDEX IF NOT EXISTS idx_reservation_guest ON Reservation(guest_id)",
+            "CREATE INDEX IF NOT EXISTS idx_reservation_hotel ON Reservation(hotel_id)",
+            "CREATE INDEX IF NOT EXISTS idx_reservation_dates ON Reservation(checkInDate, checkOutDate)",
+            "CREATE INDEX IF NOT EXISTS idx_reservation_status ON Reservation(status)"
+    };
+
+    Connection conn = null;
+    try {
+        conn = getConnection();
+        conn.setAutoCommit(false); // Start transaction
+
+        // Create tables
+        for (int i = 0; i < createTableQueries.length; i++) {
+            try (PreparedStatement stmt = conn.prepareStatement(createTableQueries[i])) {
+                stmt.execute();
+                System.out.println("✓ Table " + (i + 1) + " created successfully");
+            }
+        }
+
+        // Create indexes
+        for (String indexQuery : createIndexQueries) {
+            try (PreparedStatement stmt = conn.prepareStatement(indexQuery)) {
+                stmt.execute();
+            }
+        }
+
+        conn.commit(); // Commit transaction
+        System.out.println("✓ All database tables and indexes created successfully!");
+
+    } catch (SQLException e) {
+        System.err.println("Error creating tables: " + e.getMessage());
+        if (conn != null) {
+            try {
+                conn.rollback(); // Rollback on error
+                System.out.println("Transaction rolled back");
+            } catch (SQLException rollbackEx) {
+                System.err.println("Error during rollback: " + rollbackEx.getMessage());
+            }
+        }
+
+        // Print detailed error information
+        printConnectionTroubleshooting();
+
+    } finally {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true); // Reset auto-commit
+                conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error closing connection: " + e.getMessage());
+            }
+        }
+    }
+}
+
+private static Connection getConnection() {
+    try {
+        return databaseConnection.getConnection();
+    } catch (SQLException e) {
+        System.err.println("Failed to establish database connection: " + e.getMessage());
+        printConnectionTroubleshooting();
+        return null;
+    }
+}
+
+public static boolean testConnection() {
+    System.out.println("Testing database connection...");
+
+    try (Connection conn = getConnection()) {
+        if (conn != null && !conn.isClosed()) {
+            DatabaseMetaData metaData = conn.getMetaData();
+            System.out.println("✓ Connected to: " + metaData.getDatabaseProductName());
+            System.out.println("✓ Version: " + metaData.getDatabaseProductVersion());
+            System.out.println("✓ Database URL: " + metaData.getURL());
+            System.out.println("✓ Connection test successful!");
+            return true;
+        }
+    } catch (SQLException e) {
+        System.err.println("Database connection test failed!");
+        System.err.println("Error: " + e.getMessage());
+        printConnectionTroubleshooting();
+        return false;
+    }
+
+    return false;
+}
+
+private static void printConnectionTroubleshooting() {
+    System.err.println("\n🔧 TROUBLESHOOTING TIPS:");
+    System.err.println("1. Make sure PostgreSQL server is running");
+    System.err.println("2. Verify database 'hilton_hotel' exists:");
+    System.err.println("   psql -U postgres -c \"CREATE DATABASE hilton_hotel;\"");
+    System.err.println("3. Check username and password are correct");
+    System.err.println("4. Ensure PostgreSQL is accepting connections on localhost:5432");
+    System.err.println("5. Add PostgreSQL JDBC dependency to your project:");
+    System.err.println("   <dependency>");
+    System.err.println("     <groupId>org.postgresql</groupId>");
+    System.err.println("     <artifactId>postgresql</artifactId>");
+    System.err.println("     <version>42.6.0</version>");
+    System.err.println("   </dependency>");
+}
+
+public static void closeConnection(Connection conn) {
+    if (conn != null) {
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println("Error closing connection: " + e.getMessage());
+        }
+    }
+}
+
+public static void main(String[] args) {
+    System.out.println("=== Hilton Hotel Database Setup ===\n");
+
+    // Test connection
+    if (testConnection()) {
+        // Create tables if connection is successful
+        createTables();
+    } else {
+        System.err.println("Cannot proceed with table creation due to connection issues.");
+        System.exit(1);
+    }
+
+    System.out.println("\n=== Database setup complete! ===");
 }
