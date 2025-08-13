@@ -216,3 +216,58 @@ class Reservation {
                 reservationId, guestId, roomNumber, checkInDate, checkOutDate, status);
     }
 }
+public class DatabaseConnection {
+    private static final String URL = "jdbc:postgresql://localhost:5432/hilton_hotel";
+    private static final String USERNAME = "postgres"; // Default PostgreSQL username
+    private static final String PASSWORD = "Hugo2002."; // Change this to your actual password
+
+    // Connection pool settings
+    private static final int CONNECTION_TIMEOUT = 30; // seconds
+    private static final int MAX_RETRIES = 3;
+
+
+    public static Connection getConnection() throws SQLException {
+        int attempts = 0;
+        SQLException lastException = null;
+
+        while (attempts < MAX_RETRIES) {
+            try {
+                Class.forName("org.postgresql.Driver");
+
+                Properties props = new Properties();
+                props.setProperty("user", USERNAME);
+                props.setProperty("password", PASSWORD);
+                props.setProperty("ssl", "false");
+                props.setProperty("loginTimeout", String.valueOf(CONNECTION_TIMEOUT));
+                props.setProperty("socketTimeout", "30");
+
+                Connection conn = DriverManager.getConnection(URL, props);
+
+                if (conn != null && !conn.isClosed()) {
+                    System.out.println("✓ Database connection established successfully");
+                    return conn;
+                }
+
+            } catch (ClassNotFoundException e) {
+                throw new SQLException("PostgreSQL JDBC driver not found. Please add postgresql dependency to your project.", e);
+            } catch (SQLException e) {
+                lastException = e;
+                attempts++;
+
+                if (attempts < MAX_RETRIES) {
+                    System.err.println("Connection attempt " + attempts + " failed. Retrying...");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new SQLException("Connection interrupted", ie);
+                    }
+                }
+            }
+        }
+
+        throw new SQLException("Failed to connect to database after " + MAX_RETRIES + " attempts. " +
+                "Please check: 1) PostgreSQL is running, 2) Database 'hilton_hotel' exists, " +
+                "3) Username/password are correct", lastException);
+    }
+}
