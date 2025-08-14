@@ -1,5 +1,8 @@
 import java.sql.*;
-import java.util.Properties;
+import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class DatabaseConnection {
     private static final String URL = "jdbc:postgresql://localhost:5432/hilton_hotel";
