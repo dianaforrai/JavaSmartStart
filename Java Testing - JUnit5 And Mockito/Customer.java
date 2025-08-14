@@ -57,5 +57,9 @@ public class Customer {
         System.out.println(thirdcustomer);
 
     }
+
+    public String getCustomerName() {
+        return firstName + " " + lastName;
+    }
 }
 
