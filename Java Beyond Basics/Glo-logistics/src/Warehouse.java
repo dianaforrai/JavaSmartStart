@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 class Warehouse {
     private Location location;
     private int capacity;
@@ -17,5 +20,8 @@ class Warehouse {
 
     public void removeInventory(Item item) {
         if (inventory != null) inventory.remove(item);
+    }
+
+    public void setInventory(ArrayList<Object> objects) {
     }
 }
