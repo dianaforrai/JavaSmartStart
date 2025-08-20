@@ -23,5 +23,6 @@ class Warehouse {
     }
 
     public void setInventory(ArrayList<Object> objects) {
+        
     }
 }
