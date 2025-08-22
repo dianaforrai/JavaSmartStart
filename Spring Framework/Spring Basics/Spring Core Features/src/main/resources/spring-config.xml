@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Fleet Bean -->
+    <bean id="fleet" class="com.glo.Fleet">
+        <property name="fleetId" value="1"/>
+        <property name="origin" value="New York"/>
+        <property name="destination" value="Los Angeles"/>
+        <property name="requiredFleets" value="5"/>
+        <property name="weight" value="1000.0"/> <!-- Default weight -->
+    </bean>
+
+</beans>
