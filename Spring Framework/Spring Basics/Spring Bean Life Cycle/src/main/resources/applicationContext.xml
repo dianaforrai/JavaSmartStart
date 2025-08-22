@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Define Fleet bean using factory method -->
+    <bean id="fleet" class="com.glo.Fleet" factory-method="createFleetInstance"
+          init-method="customInitMethod" destroy-method="customDestroyMethod">
+        <property name="fleetId" value="101"/>
+        <property name="numberOfFleets" value="5"/>
+        <property name="origin" value="New York"/>
+        <property name="destination" value="Los Angeles"/>
+    </bean>
+
+</beans>
