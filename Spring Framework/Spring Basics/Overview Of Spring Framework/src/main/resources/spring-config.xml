@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Fleet Bean -->
+    <bean id="fleet" class="com.glo.Fleet">
+        <property name="fleetId" value="101"/>
+        <property name="fleetName" value="Logistics Fleet A"/>
+    </bean>
+
+    <!-- Client Bean -->
+    <bean id="client" class="com.glo.Client">
+        <property name="clientId" value="201"/>
+        <property name="clientName" value="GloLogistics Client"/>
+    </bean>
+
+</beans>
