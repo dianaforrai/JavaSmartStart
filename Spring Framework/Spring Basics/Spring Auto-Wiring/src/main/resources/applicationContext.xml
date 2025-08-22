@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Fleet Repository -->
+    <bean id="fleetRepository" class="com.glo.repository.FleetRepositoryImpl" />
+
+    <!-- Fleet Service with constructor-based autowiring -->
+    <bean id="fleetService" class="com.glo.service.FleetService" autowire="constructor" />
+
+    <!-- Fleet Service with byName autowiring -->
+    <bean id="fleetServiceByName" class="com.glo.service.FleetService" autowire="byName" />
+
+    <!-- Fleet bean for testing -->
+    <bean id="fleet" class="com.glo.model.Fleet" autowire="constructor">
+        <constructor-arg value="1" />
+        <constructor-arg value="Express Fleet" />
+        <constructor-arg value="5" />
+    </bean>
+
+</beans>
