@@ -6,20 +6,19 @@ import jakarta.validation.constraints.Size;
 
 public class CustomerDTO {
 
-    @NotBlank(message = "Customer name is required")
-    @Size(min = 2, max = 50)
+    @NotBlank(message = "{customer.name.notblank}")
     private String custName;
 
-    @NotBlank(message = "Contact number is required")
-    @Size(min = 10, max = 15)
+    @NotBlank(message = "{customer.contact.notblank}")
     private String custContactNo;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @NotBlank(message = "{customer.email.notblank}")
+    @Email(message = "{customer.email.invalid}")
     private String custEmail;
 
-    @NotBlank(message = "City is required")
+    @NotBlank(message = "{customer.city.notblank}")
     private String custCity;
+
 
     public Object getCustName() {
         return custName;
