@@ -15,41 +15,37 @@ import java.util.List;
 @Service
 public class CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    public Customer saveCustomer(Customer customer) {
-        return customerRepository.save(customer);
+    public List<Customer> getAllCustomers() // v1
+    {
+        return null;
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<Customer> getAllCustomers(Pageable pageable) // v2
+    {
+        return null;
     }
 
     public Customer getCustomerById(Long id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException(id));
+        return null;
     }
-
+    public Customer saveCustomer(Customer customer) {
+        return null;
+    }
     public Customer updateCustomer(Long id, Customer customer) {
-        if (!customerRepository.existsById(id)) {
-            throw new CustomerNotFoundException(id);
-        }
-        customer.setCustId(id);
-        return customerRepository.save(customer);
+        return null;
     }
-
     public void deleteCustomer(Long id) {
-        if (!customerRepository.existsById(id)) {
-            throw new CustomerNotFoundException(id);
-        }
-        customerRepository.deleteById(id);
     }
 
-
-    // New method for pagination and sorting
     public Page<Customer> getCustomersPaginatedAndSorted(int page, int size, String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return customerRepository.findAll(pageable);
+        return null;
     }
+    public Page<Customer> getCustomers(Integer pageNumber, Integer pageSize, String sortField, String sortDir) {
+        return null;
+    }
+    public List<Customer> getCustomersWithGmail() {
+        return null;
+    }
+
 }
+
