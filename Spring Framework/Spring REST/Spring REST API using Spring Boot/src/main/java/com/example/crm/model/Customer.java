@@ -56,4 +56,8 @@ public class Customer {
     public void setCustId(Long id) {
         this.custId = id;
     }
+
+    public Long getCustId() {
+        return custId;
+    }
 }

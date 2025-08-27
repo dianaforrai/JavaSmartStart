@@ -48,8 +48,9 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable Long id) {
+    public Class<?> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
+        return null;
     }
 
     @GetMapping("/page")
