@@ -2,7 +2,8 @@ package com.example.crm.controller;
 
 import com.example.crm.model.Customer;
 import com.example.crm.service.CustomerService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,11 +12,8 @@ import java.util.List;
 @RequestMapping("/api/customers")
 public class CustomerController {
 
-    private final CustomerService customerService;
-
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
+    @Autowired
+    private CustomerService customerService;
 
     @PostMapping
     public Customer createCustomer(@RequestBody Customer customer) {
@@ -28,10 +26,8 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
-        return customerService.getCustomerById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public Customer getCustomerById(@PathVariable Long id) {
+        return customerService.getCustomerById(id);
     }
 
     @PutMapping("/{id}")
@@ -40,8 +36,17 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+    public void deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
-        return ResponseEntity.noContent().build();
+    }
+
+    // New endpoint for pagination and sorting
+    @GetMapping("/page")
+    public Page<Customer> getCustomersPaginatedAndSorted(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "custId") String sortBy
+    ) {
+        return customerService.getCustomersPaginatedAndSorted(page, size, sortBy);
     }
 }

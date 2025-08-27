@@ -52,4 +52,8 @@ public class Customer {
     public void setCustCity(Object custCity) {
         this.custCity = (String) custCity;
     }
+
+    public void setCustId(Long id) {
+        this.custId = id;
+    }
 }

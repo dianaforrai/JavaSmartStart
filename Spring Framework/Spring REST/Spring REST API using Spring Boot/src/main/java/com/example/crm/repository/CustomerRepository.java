@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    // No additional code needed; JpaRepository already supports pagination and sorting
 }

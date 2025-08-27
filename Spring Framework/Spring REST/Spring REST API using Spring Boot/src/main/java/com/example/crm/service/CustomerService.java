@@ -2,19 +2,20 @@ package com.example.crm.service;
 
 import com.example.crm.model.Customer;
 import com.example.crm.repository.CustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CustomerService {
 
-    private final CustomerRepository customerRepository;
-
-    public CustomerService(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
+    @Autowired
+    private CustomerRepository customerRepository;
 
     public Customer saveCustomer(Customer customer) {
         return customerRepository.save(customer);
@@ -24,21 +25,22 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Optional<Customer> getCustomerById(Long id) {
-        return customerRepository.findById(id);
+    public Customer getCustomerById(Long id) {
+        return customerRepository.findById(id).orElse(null);
     }
 
     public Customer updateCustomer(Long id, Customer customer) {
-        return customerRepository.findById(id).map(c -> {
-            c.setCustName(customer.getCustName());
-            c.setCustContactNo(customer.getCustContactNo());
-            c.setCustEmail(customer.getCustEmail());
-            c.setCustCity(customer.getCustCity());
-            return customerRepository.save(c);
-        }).orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
+        customer.setCustId(id);
+        return customerRepository.save(customer);
     }
 
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
+    }
+
+    // New method for pagination and sorting
+    public Page<Customer> getCustomersPaginatedAndSorted(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return customerRepository.findAll(pageable);
     }
 }
