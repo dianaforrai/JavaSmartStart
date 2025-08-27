@@ -5,6 +5,8 @@ import com.example.crm.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import com.example.crm.dto.CustomerDTO;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -16,7 +18,12 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer customer) {
+    public Customer createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
+        Customer customer = new Customer();
+        customer.setCustName(customerDTO.getCustName());
+        customer.setCustContactNo(customerDTO.getCustContactNo());
+        customer.setCustEmail(customerDTO.getCustEmail());
+        customer.setCustCity(customerDTO.getCustCity());
         return customerService.saveCustomer(customer);
     }
 
@@ -31,7 +38,12 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
+    public Customer updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDTO customerDTO) {
+        Customer customer = new Customer();
+        customer.setCustName(customerDTO.getCustName());
+        customer.setCustContactNo(customerDTO.getCustContactNo());
+        customer.setCustEmail(customerDTO.getCustEmail());
+        customer.setCustCity(customerDTO.getCustCity());
         return customerService.updateCustomer(id, customer);
     }
 
@@ -40,7 +52,6 @@ public class CustomerController {
         customerService.deleteCustomer(id);
     }
 
-    // New endpoint for pagination and sorting
     @GetMapping("/page")
     public Page<Customer> getCustomersPaginatedAndSorted(
             @RequestParam(defaultValue = "0") int page,
