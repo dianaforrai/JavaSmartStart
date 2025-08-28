@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.verification.VerificationMode;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -15,7 +16,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static jdk.internal.org.objectweb.asm.util.CheckClassAdapter.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,6 +53,10 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.custName").value("John Doe"));
 
         verify(customerService, times(1)).createCustomer(any(Customer.class));
+    }
+
+    private CustomerController verify(CustomerService customerService, VerificationMode times) {
+        return null;
     }
 
     @Test
