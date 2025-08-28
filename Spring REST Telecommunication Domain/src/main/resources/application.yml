@@ -1,0 +1,28 @@
+# src/main/resources/application.yml
+server:
+  port: 8080
+
+spring:
+  application:
+    name: sim-management-system
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/glologistics_db
+    username: postgres
+    password: Hugo2002.
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    com.hitachi.mobile: DEBUG
+    org.springframework.web: DEBUG
