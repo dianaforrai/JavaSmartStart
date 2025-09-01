@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EMS Home</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to EMS</h1>
+
+    <div th:if="${user == null}">
+        <p>You are not signed in.</p>
+        <a class="btn" href="/login">Go to Login</a>
+    </div>
+
+    <div th:if="${user != null}">
+        <p>Signed in as <strong th:text="${user.getFullName()}">Full Name</strong>
+            (<span th:text="${user.getEmail()}">email@example.com</span>)
+        </p>
+        <p><a class="btn" href="/employees">View Employees</a></p>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn-outline" type="submit">Logout</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

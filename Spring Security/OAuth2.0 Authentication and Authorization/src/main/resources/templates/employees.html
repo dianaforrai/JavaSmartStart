@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employees</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Employees</h1>
+
+    <div class="user-card" th:if="${user != null}">
+        <div class="avatar">
+            <img th:src="${user.picture}" alt="avatar" />
+        </div>
+        <div>
+            <div><strong th:text="${user.fullName}">User Name</strong></div>
+            <div th:text="${user.email}">email@example.com</div>
+        </div>
+        <div style="margin-left:auto">
+            <form th:action="@{/logout}" method="post">
+                <button class="btn-outline" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th><th>Name</th><th>Role</th><th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${employees}">
+            <td th:text="${e.id}">1</td>
+            <td th:text="${e.name}">Alice</td>
+            <td th:text="${e.role}">Manager</td>
+            <td th:text="${e.email}">alice@example.com</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p style="margin-top:16px;"><a class="link" href="/">Back to Home</a></p>
+</div>
+</body>
+</html>

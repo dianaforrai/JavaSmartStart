@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; margin: 40px; }
+.container { text-align: center; }
+.btn { padding: 10px 16px; background-color: #1a73e8; color: #fff; border: none; border-radius: 8px; text-decoration: none; }
+.btn img { vertical-align: middle; }

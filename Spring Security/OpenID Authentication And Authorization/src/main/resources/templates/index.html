@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EMS Home</title>
+</head>
+<body>
+<div>
+    <h1>Welcome to EMS</h1>
+    <div th:if="${user == null}">
+        <a href="/login">Login</a>
+    </div>
+    <div th:if="${user != null}">
+        <p th:text="${user.name}">User Name</p>
+        <a href="/employees">Employees</a>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
