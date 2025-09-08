@@ -1,0 +1,13 @@
+server:
+  port: 8085
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      externalServiceCB:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
