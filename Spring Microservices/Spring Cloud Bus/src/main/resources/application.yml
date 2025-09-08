@@ -1,0 +1,28 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server-bus
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:///mnt/data/centralized-config-microservices/config-repo
+          default-label: main
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,bus-refresh
